@@ -13,6 +13,7 @@
 // MEMORY & BUS
 // =============================================================================
 
+// NOTE: nice use of constexpr
 /** 64KB addressable memory (2^16 = 65536 words, each 16 bits) */
 constexpr size_t MEMORY_SIZE = 65536;
 
@@ -36,6 +37,7 @@ public:
     const uint16_t* getMemory() const { return memory; }
 
 private:
+   // always intialize private mems eitheir _memory or m_memory
     uint16_t* memory;
 };
 
@@ -52,6 +54,7 @@ constexpr uint16_t FLAG_NEGATIVE = (1 << 2); // bit 2: result negative (bit 15 s
 // INSTRUCTION OPCODES (4-bit opcode in bits 15-12 of instruction)
 // =============================================================================
 
+// NOTE: good use of enum class
 enum class Opcode : uint8_t {
     HALT = 0,
     MOVI,   // Move immediate (9-bit) into register
@@ -76,6 +79,7 @@ enum class Opcode : uint8_t {
 // =============================================================================
 
 struct CPUState {
+   // prefer to use std::array here
     uint16_t R[8];       // General Purpose Registers R0-R7
     uint16_t PC;         // Program Counter (next instruction address)
     uint16_t FLAGS;      // Flags: Zero, Carry, Negative
@@ -107,6 +111,7 @@ public:
     bool isTracing() const { return tracing; }
 
 private:
+    // NOTE: private member _ or m_
     Bus& bus;
     CPUState state;
     bool tracing;

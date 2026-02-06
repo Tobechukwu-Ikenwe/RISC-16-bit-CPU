@@ -6,7 +6,8 @@
  * Trace is enabled by default.
  */
 
-#include "gpr_cpu.h"
+// NOTE: fix path to gpr_cpu.h
+#include "cpu/gpr_cpu.h"
 #include "assembler.h"
 #include <string>
 #include <iostream>
@@ -17,7 +18,9 @@ static void printTraceHeader() {
     std::cout << "--------+--------------------------------------------------+-------+----------------\n";
 }
 
+// NOTE: prefer to use the C++ style version instead of char** -> char[]
 int main(int argc, char** argv) {
+   // NOTE: string_view is a perfect use
     const char* asmPath = "addition.asm";
     if (argc >= 2)
         asmPath = argv[1];

@@ -7,6 +7,8 @@
 #include <map>
 #include <fstream>
 
+// NOTE: not bad but good use case for string_view which is even cheaper then const string&
+//     also prefer to use a switch statement here but does not really matter
 static int getOpcode(const std::string& mnem) {
     if (mnem == "HALT") return 0;
     if (mnem == "MOVI") return 1;
@@ -27,12 +29,14 @@ static int getOpcode(const std::string& mnem) {
     return -1;
 }
 
+// NOTE: not needed std::string provies API's to handle this
 static char toUpperChar(char c) {
     if (c >= 'a' && c <= 'z') return static_cast<char>(c - 32);
     return c;
 }
 
 static std::string toUpper(std::string s) {
+    // NOTE: not needed you cna just call s.method() I forogt the method but there is one for that
     for (char& c : s) c = toUpperChar(c);
     return s;
 }
@@ -92,6 +96,7 @@ static uint16_t encRR(uint8_t op, uint8_t rd, uint8_t rs) {
     return ((op & 15u) << 12) | ((rd & 7u) << 9) | ((rs & 7u) << 6);
 }
 
+// NOTE: again does not need to be on the heap it is not that large
 AssembleResult assemble(const std::string& source, uint16_t* mem, size_t memSize) {
     AssembleResult res{true, "", 0};
     std::map<std::string, uint16_t> labels;
@@ -104,11 +109,16 @@ AssembleResult assemble(const std::string& source, uint16_t* mem, size_t memSize
 
     while (std::getline(iss1, line)) {
         ++lineNum;
+        // NOTE: you are jumping to stripComment everytime getline gets called?
+        // Maybe we can check for the comment first instead of jumping to a new branch everytime
+        // Ahhh I see now so we can do like if strip(comment) alkso instead of returning an empty
+        // string instead opt to return just true or false
         std::string rest = stripComment(line);
         if (rest.empty()) continue;
 
         if (rest.back() == ':') {
             std::string name = trim(rest.substr(0, rest.size() - 1));
+            // NOTE: again use the string internal api
             if (!name.empty()) labels[toUpper(name)] = pc;
             continue;
         }
@@ -121,6 +131,7 @@ AssembleResult assemble(const std::string& source, uint16_t* mem, size_t memSize
 
         if (cmd == ".ORG") {
             if (tok.size() < 2) {
+                // NOTE: seprate lines here
                 res.ok = false; res.error = ".ORG requires address"; res.lineNum = lineNum;
                 return res;
             }
@@ -242,6 +253,7 @@ AssembleResult assemble(const std::string& source, uint16_t* mem, size_t memSize
                 }
                 break;
             }
+            // NOTE: instead of saying the number I am sure you can use the enumclass a bit more readable
             case 2: case 3: case 4: case 5: case 6: case 7: case 8: case 9:
             case 10: case 11: case 12: {
                 if (tok.size() < 2) {

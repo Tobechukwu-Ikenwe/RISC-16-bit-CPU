@@ -11,6 +11,7 @@
 // =============================================================================
 
 Bus::Bus() {
+    // NOTE: no need to allocate memory on the heap it is not a large number and will not grow
     memory = new uint16_t[MEMORY_SIZE]();
 }
 
@@ -101,6 +102,7 @@ GPRCPU::GPRCPU(Bus& bus) : bus(bus), tracing(false) {
 }
 
 void GPRCPU::reset() {
+    //  NOTE: use size_t
     for (unsigned i = 0; i < 8; ++i)
         state.R[i] = 0;
     state.PC = 0;
